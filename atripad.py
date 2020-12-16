@@ -5,7 +5,7 @@ import tkinter.messagebox as tmsg
 import os
 import googlesearch
 from urllib.request import urlopen as req
-
+import webbrowser
 font = "calibiri "
 size = 10
 sizestr = str(size)
@@ -18,7 +18,7 @@ f = "Untitled"
 
 def b():
     global special
-    special = "bold"
+    special = " bold"
 def i():
     global special
     special ="italics"
@@ -68,11 +68,13 @@ def opennew():
 def save():
     global file
     if file == None:
-        file = sv(defaultextension=".txt", filetypes=[("text documents", "*.txt"), ("All Files", "*.*")])
+        saveas()
     else:
         with open(file, "w")as f:
             f.write(t.get("1.0", END))
-
+def saveas():
+    file = sv(defaultextension=".txt", filetypes=[("text documents", "*.txt"), ("All Files", "*.*")])
+    save()
 
 def quitGUI():
     global root
@@ -111,31 +113,29 @@ def abm():
 
 
 def searchi():
-    try:
-        g = googlesearch.search(t.get("1.0", END), stop=1)
-        for j in g:
-            r = req(j)
-            t.insert(END, r)
-    except OSError:
-        tmsg.showinfo("URL not exists", 'URL you typed is invalid.')
-
+    global special
+    global sizestr
+    global t
+    f1 = Tk()
+    def ui(event):
+        sizestr = str(sizestr2.get())
+        t.config(font="calibiri" + sizestr)
+    sizestr2 = Scale(f1,from_=1,to=100,command = ui)
+    sizestr2.pack()
+    Button(f1,text="Done",command=f1.destroy).pack()
+    f1.mainloop()
 
 root.geometry("200x200")
 root.title(f + " - atripad")
-t = Text(root, font=font + sizestr + " " + special)
-f1 = Frame(root, bg = "grey" )
-
-t.pack(side = BOTTOM,fill="x")
-f1.pack(side = TOP)
-Button(f1,text = "B",command = b,font = "calibri 15 bold").pack()
-# Button(f1,text = "I",command = i,font = "calibri 15 italics")
-Button(f1,text = "Fonts",command = fonti,font = "calibri").pack()
+t = Text(root, font="calibiri" + sizestr)
+t.pack(side = BOTTOM,fill=BOTH)
 m = Menu(root)
 m2 = Menu(root)
 fm = Menu(m, tearoff=0)
 fm.add_command(label="New", command=new)
 fm.add_command(label="Open", command=opennew)
 fm.add_command(label="Save", command=save)
+fm.add_command(label="Save As", command=saveas)
 fm.add_separator()
 fm.add_command(label="Quit", command=quitGUI)
 
@@ -143,7 +143,7 @@ em = Menu(m, tearoff=0)
 em.add_command(label="Cut", command=cut)
 em.add_command(label="Copy", command=copy)
 em.add_command(label="Paste", command=paste)
-em.add_command(label="search in google", command=searchi)
+# em.add_command(label="edit style", command=searchi)
 am = Menu(m)
 am.add_command(label="About Me", command=abm)
 
